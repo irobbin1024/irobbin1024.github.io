@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="组件化,bundle,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="生成资源bundle的流程组件化之后，每个模块作为一个pod被引用，那么资源放在一个bundle里面会比较方便。资源包括图片、视频、xib编译之后的nib、storyboard、国际化字符串等文件。 xib和storyboard是需要编译的，所以我们需要建立一个可编译的bundle。理论上来说就算当时没有xib和storyboard，为了以后可能会引入这些文件，我们也应该用编译型bundle，有备">
+<meta name="keywords" content="组件化,bundle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="生成资源bundle的流程">
+<meta property="og:url" content="http://www.irobbin1024.com/2018/03/29/生成资源bundle的流程/index.html">
+<meta property="og:site_name" content="irobbin的小站">
+<meta property="og:description" content="生成资源bundle的流程组件化之后，每个模块作为一个pod被引用，那么资源放在一个bundle里面会比较方便。资源包括图片、视频、xib编译之后的nib、storyboard、国际化字符串等文件。 xib和storyboard是需要编译的，所以我们需要建立一个可编译的bundle。理论上来说就算当时没有xib和storyboard，为了以后可能会引入这些文件，我们也应该用编译型bundle，有备">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050214.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050218.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050224.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050228.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050231.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050234.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050241.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050246.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050250.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050254.jpg">
+<meta property="og:updated_time" content="2019-11-07T16:09:58.279Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="生成资源bundle的流程">
+<meta name="twitter:description" content="生成资源bundle的流程组件化之后，每个模块作为一个pod被引用，那么资源放在一个bundle里面会比较方便。资源包括图片、视频、xib编译之后的nib、storyboard、国际化字符串等文件。 xib和storyboard是需要编译的，所以我们需要建立一个可编译的bundle。理论上来说就算当时没有xib和storyboard，为了以后可能会引入这些文件，我们也应该用编译型bundle，有备">
+<meta name="twitter:image" content="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050214.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.irobbin1024.com/2018/03/29/生成资源bundle的流程/">
+
+
+
+
+
+  <title>生成资源bundle的流程 | irobbin的小站</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">irobbin的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome To My Home</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.irobbin1024.com/2018/03/29/生成资源bundle的流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irobbin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="irobbin的小站">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">生成资源bundle的流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-29T19:25:47+08:00">
+                2018-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/组件化/" itemprop="url" rel="index">
+                    <span itemprop="name">组件化</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="生成资源bundle的流程"><a href="#生成资源bundle的流程" class="headerlink" title="生成资源bundle的流程"></a>生成资源bundle的流程</h1><p>组件化之后，每个模块作为一个pod被引用，那么资源放在一个bundle里面会比较方便。资源包括图片、视频、xib编译之后的nib、storyboard、国际化字符串等文件。</p>
+<p>xib和storyboard是需要编译的，所以我们需要建立一个可编译的bundle。理论上来说就算当时没有xib和storyboard，为了以后可能会引入这些文件，我们也应该用编译型bundle，有备无患。</p>
+<h2 id="1-添加resource-target"><a href="#1-添加resource-target" class="headerlink" title="1. 添加resource target"></a>1. 添加resource target</h2><p>进入target list 列表页面，点击加号</p>
+<a id="more"></a>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050214.jpg" alt></p>
+<p>选择macOS，搜索bundle，选中bundle，点击下一步</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050218.jpg" alt></p>
+<p>输入target名称，推荐使用格式 XYVivaXXXResource，XXX为模块名称，比如XYVivaTemplateCenter模块的bundle名称为：XYVivaTemplateCenterResource.bundle</p>
+<p>然后在项目结构那边可以看到多了一个文件夹</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050224.jpg" alt></p>
+<p>所有的资源文件，全部拖入这个目录，并选择此target。</p>
+<h2 id="2-设置bundle-target"><a href="#2-设置bundle-target" class="headerlink" title="2. 设置bundle target"></a>2. 设置bundle target</h2><p>打开info.plist，删除Executable file这一行</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050228.jpg" alt></p>
+<p>进入target设置页面，设置architectures为iOS</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050231.jpg" alt></p>
+<p>接着设置combine_hidpi_images 为 NO</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050234.jpg" alt></p>
+<h2 id="3-添加脚本文件"><a href="#3-添加脚本文件" class="headerlink" title="3. 添加脚本文件"></a>3. 添加脚本文件</h2><p>先列出脚本文件代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果工程名称和Bundle的Target名称不一样的话，要自定义FMKNAME</span></span><br><span class="line"><span class="comment"># 例如: FMK_NAME = "MyBundle"</span></span><br><span class="line">FMK_NAME=<span class="string">"XYVivaTemplateCenterResource"</span></span><br><span class="line"><span class="comment"># Install dir will be the final output to the framework.</span></span><br><span class="line"><span class="comment"># The following line create it in the root folder of the current project.</span></span><br><span class="line">INSTALL_DIR=<span class="variable">$&#123;SRCROOT&#125;</span>/<span class="variable">$&#123;FMK_NAME&#125;</span>.bundle</span><br><span class="line"><span class="comment"># Working dir will be deleted after the framework creation.</span></span><br><span class="line">WRK_DIR=build</span><br><span class="line">DEVICE_DIR=<span class="variable">$&#123;WRK_DIR&#125;</span>/Release-iphoneos/<span class="variable">$&#123;FMK_NAME&#125;</span>.bundle</span><br><span class="line"><span class="comment"># -configuration $&#123;CONFIGURATION&#125;</span></span><br><span class="line"><span class="comment"># Clean and Building both architectures.</span></span><br><span class="line">xcodebuild -configuration <span class="string">"Release"</span> -target <span class="string">"<span class="variable">$&#123;FMK_NAME&#125;</span>"</span> -sdk iphoneos clean build</span><br><span class="line"></span><br><span class="line"><span class="comment"># Cleaning the oldest.</span></span><br><span class="line"><span class="keyword">if</span> [ -d <span class="string">"<span class="variable">$&#123;INSTALL_DIR&#125;</span>"</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">rm -rf <span class="string">"<span class="variable">$&#123;INSTALL_DIR&#125;</span>"</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">mkdir -p <span class="string">"<span class="variable">$&#123;INSTALL_DIR&#125;</span>"</span></span><br><span class="line">cp -R <span class="string">"<span class="variable">$&#123;DEVICE_DIR&#125;</span>/"</span> <span class="string">"<span class="variable">$&#123;INSTALL_DIR&#125;</span>/"</span></span><br><span class="line">rm -rf <span class="string">"<span class="variable">$&#123;INSTALL_DIR&#125;</span>/_CodeSignature"</span></span><br><span class="line">rm -rf <span class="string">"<span class="variable">$&#123;INSTALL_DIR&#125;</span>/info.plist"</span></span><br></pre></td></tr></table></figure>
+<p>首先说明一下脚本文件的作用是什么，很简单，就是使用xcodebuild命令编译出一个bundle，然后copy到项目根目录，还有一步是最后两行代码，它删除了bundle内部的代码签名目录_CodeSignature和配置文件info.plist，这两个东西我们是不需要的。</p>
+<p>接着打开项目target，打开build phases，添加一段脚本</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050241.jpg" alt></p>
+<p>然后把刚才那段代码copy进去，更改FMK_NAME为你真实的resource target名称</p>
+<p>最后把Run Script移动到Copy Bundle Resources前面</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050246.jpg" alt></p>
+<h2 id="3-使用这个bundle"><a href="#3-使用这个bundle" class="headerlink" title="3. 使用这个bundle"></a>3. 使用这个bundle</h2><p>cmd+b编译一下先</p>
+<p>编译成功之后，你的项目根目录会多出来一个你期望的bundle文件，请添加到项目中来</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050250.jpg" alt></p>
+<p>到现在已经全部完成了，你可以试试编译xib，storyboard，图片这几个资源试试看。</p>
+<p>看下面的图片，我已经成功编译了这几个资源</p>
+<p><img src="http://qn-pic-cdn.irobbin1024.com/blog/2019-08-19-050254.jpg" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/组件化/" rel="tag"># 组件化</a>
+          
+            <a href="/tags/bundle/" rel="tag"># bundle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/16/关注我的简书/" rel="next" title="关注我的简书">
+                <i class="fa fa-chevron-left"></i> 关注我的简书
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/30/AVPlayer缓存-OTPlayerCache的介绍/" rel="prev" title="AVPlayer缓存-OTPlayerCache的介绍">
+                AVPlayer缓存-OTPlayerCache的介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irobbin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#生成资源bundle的流程"><span class="nav-number">1.</span> <span class="nav-text">生成资源bundle的流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-添加resource-target"><span class="nav-number">1.1.</span> <span class="nav-text">1. 添加resource target</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-设置bundle-target"><span class="nav-number">1.2.</span> <span class="nav-text">2. 设置bundle target</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-添加脚本文件"><span class="nav-number">1.3.</span> <span class="nav-text">3. 添加脚本文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-使用这个bundle"><span class="nav-number">1.4.</span> <span class="nav-text">3. 使用这个bundle</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irobbin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4  </div>
+
+     <div style="width:300px;margin:0 auto; padding:20px 0;">
+        <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=35082102000166" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="http://qn-pic-cdn.irobbin1024.com/blog/5hqdg.png" style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽公网安备 35082102000166号</p></a>
+
+        <a target="_blank" href="http://www.miitbeian.gov.cn/" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽ICP备19016914号-1</p></a>
+
+      </div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
