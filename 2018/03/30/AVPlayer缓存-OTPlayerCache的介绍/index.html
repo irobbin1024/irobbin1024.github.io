@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="开源iOS框架,AVPlayer,AVAssetResourceLoader,播放器,iOS,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="AVPlayer缓存-OTPlayerCache的介绍##0x00 AVPlayer 实现缓存的两种方式 AVPlayer 实现缓存主要有两种方式，第一种是在 App 内置一个 HTTP 服务器，采用代理的方式实现缓存，这种实现方案需要引入第三方库，实现上也较为复杂，优点是通用性强，不局限于 AVPlayer 的缓存，理论上支持任意播放器，甚至是接口请求和图片的缓存都可以做。">
+<meta name="keywords" content="开源iOS框架,AVPlayer,AVAssetResourceLoader,播放器,iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AVPlayer缓存-OTPlayerCache的介绍">
+<meta property="og:url" content="http://www.irobbin1024.com/2018/03/30/AVPlayer缓存-OTPlayerCache的介绍/index.html">
+<meta property="og:site_name" content="irobbin的小站">
+<meta property="og:description" content="AVPlayer缓存-OTPlayerCache的介绍##0x00 AVPlayer 实现缓存的两种方式 AVPlayer 实现缓存主要有两种方式，第一种是在 App 内置一个 HTTP 服务器，采用代理的方式实现缓存，这种实现方案需要引入第三方库，实现上也较为复杂，优点是通用性强，不局限于 AVPlayer 的缓存，理论上支持任意播放器，甚至是接口请求和图片的缓存都可以做。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050305.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050308.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050313.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050326.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050332.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fo5niuaxkvj306m01njrp.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050336.jpg">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050340.jpg">
+<meta property="og:updated_time" content="2020-11-22T09:05:02.195Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AVPlayer缓存-OTPlayerCache的介绍">
+<meta name="twitter:description" content="AVPlayer缓存-OTPlayerCache的介绍##0x00 AVPlayer 实现缓存的两种方式 AVPlayer 实现缓存主要有两种方式，第一种是在 App 内置一个 HTTP 服务器，采用代理的方式实现缓存，这种实现方案需要引入第三方库，实现上也较为复杂，优点是通用性强，不局限于 AVPlayer 的缓存，理论上支持任意播放器，甚至是接口请求和图片的缓存都可以做。">
+<meta name="twitter:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050305.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.irobbin1024.com/2018/03/30/AVPlayer缓存-OTPlayerCache的介绍/">
+
+
+
+
+
+  <title>AVPlayer缓存-OTPlayerCache的介绍 | irobbin的小站</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">irobbin的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome To My Home</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.irobbin1024.com/2018/03/30/AVPlayer缓存-OTPlayerCache的介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irobbin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="irobbin的小站">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AVPlayer缓存-OTPlayerCache的介绍</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-30T00:48:00+08:00">
+                2018-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="AVPlayer缓存-OTPlayerCache的介绍"><a href="#AVPlayer缓存-OTPlayerCache的介绍" class="headerlink" title="AVPlayer缓存-OTPlayerCache的介绍"></a>AVPlayer缓存-OTPlayerCache的介绍</h1><p>##0x00 AVPlayer 实现缓存的两种方式</p>
+<p>AVPlayer 实现缓存主要有两种方式，第一种是在 App 内置一个 HTTP 服务器，采用代理的方式实现缓存，这种实现方案需要引入第三方库，实现上也较为复杂，优点是通用性强，不局限于 AVPlayer 的缓存，理论上支持任意播放器，甚至是接口请求和图片的缓存都可以做。<br><a id="more"></a></p>
+<p>AVAssetResourceLoader 的实现 AVPlayer 缓存最直接的方式，本身也是 AVFoundation 自带的 API ，通过代理的方式实现缓存，技术上比较简单直接，不需要引入第三方库，网上相关的资料也比较多。优先采用此方式。</p>
+<p>HTTP 方式的缓存实现，具体可以查看开源库：<a href="https://github.com/ChangbaDevs/KTVHTTPCache" target="_blank" rel="noopener">https://github.com/ChangbaDevs/KTVHTTPCache</a></p>
+<h2 id="0x01-AVAssetResourceLoader-的基本原理"><a href="#0x01-AVAssetResourceLoader-的基本原理" class="headerlink" title="0x01 AVAssetResourceLoader 的基本原理"></a>0x01 AVAssetResourceLoader 的基本原理</h2><p>AVAssetResourceLoader 是 AVAsset 的一个属性，字面意思上是用来获取视频内容的，但其实我们只用到它里面的一个属性 AVAssetResourceLoaderDelegate，它是一个代理，当我们设置了代理，那么当AVPlayer需要视频内容片段的时候，就会调用对应的代理，我们在代理里面发起HTTP请求，将内容copy一份给AVPlayer，保存一份到本地磁盘，当视频播放完成的时候，将所有本地磁盘中的数据片段重新组合形成一个mp4视频文件，这个文件就被我们成功缓存下来了。</p>
+<p>AVPlayer对视频的请求是分片的，我们可以抓请求看一下:</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050305.jpg" alt></p>
+<p>播放一个很短的视频片段，发起了一系列的请求</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050308.jpg" alt></p>
+<p>这些请求都有一个Range属性，指定了数据段</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050313.jpg" alt></p>
+<p>range 0-1一般是视频开始的第一个请求，主要是为了获取视频元数据，用来确定视频的长度和格式</p>
+<p>以下是一些代码：</p>
+<p>设置代理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">OTAssetLoaderDelegate *resourceLoader = [OTAssetLoaderDelegate new];</span><br><span class="line">[self.videoURLAsset.resourceLoader setDelegate:resourceLoader queue:dispatch_get_main_queue()];</span><br></pre></td></tr></table></figure>
+<p>代理方法定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest &#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForRenewalOfRequestedResource:(AVAssetResourceRenewalRequest *)renewalRequest &#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到在代理方法中传过来一个属性 AVAssetResourceLoadingRequest ，这里面有几个重要的属性需要介绍一下</p>
+<ul>
+<li><p><code>NSURLRequest *request</code> </p>
+<blockquote>
+<p>它是 AVPlayer 发起的原始请求，里面包含对应的 url，header，range 等 HTTP 请求信息，对于我们非常重要，因为我们自己的请求就是基于这个 request 的。</p>
+</blockquote>
+</li>
+<li><p><code>AVAssetResourceLoadingContentInformationRequest *contentInformationRequest</code></p>
+<blockquote>
+<p>这个属性包含了关于这个视频文件的一些信息，比如 <code>contentType</code> ，<code>contentLength</code> ，特别是 <code>contentType</code> ，如果设置的值不在 <code>allowedContentTypes</code> 之内，那么播放会失败。所以这里有个需要注意的地方，服务器返回的 <code>contentType</code> 必须是正确的值，不然就算URL实际指向的是一个视频文件，播放也会有问题的。</p>
+</blockquote>
+</li>
+<li><p><code>AVAssetResourceLoadingDataRequest *dataRequest</code></p>
+<blockquote>
+<p>dataRequest 就是代表实际数据，属性 requestedOffset，requestedLength用来设置请求的Range头，</p>
+<p>requestedOffset当前请求的偏移量，requestedLength表示请求长度。</p>
+<p>因为HTTP请求视频文件是一点一点返回的，所以没当有数据返回，就必须调用respondWithData方法，把数据给AVAssetResourceLoadingRequest。</p>
+</blockquote>
+</li>
+</ul>
+<p>基本流程其实很简单，当AVPlayer需要数据的时候就不断的调用代理方法  <code>shouldWaitForLoadingOfRequestedResource</code>，然后我们发起一个新的 HTTP 请求，在请求的 <code>didReceiveResponse</code>中设置 <code>contentInformationRequest</code> 的相关属性，在 <code>didReceiveData</code> 的时候给<code>AVAssetResourceLoadingRequest</code>赋值且保存一份到本地磁盘，当播放完成或者下载完成的时候，合成出一个视频文件出来。</p>
+<p>其实在一开始的时候还有一个步骤，就是把视频 URL 的 scheme 从 HTTP 改为我们自定义的 scheme ，因为 AVPlayer 只有当它不知道怎么加载这个资源的时候才会走我们的代理。</p>
+<h2 id="0x02-缓存的详细流程"><a href="#0x02-缓存的详细流程" class="headerlink" title="0x02 缓存的详细流程"></a>0x02 缓存的详细流程</h2><p>以下是详细流程，主要是一些代码，或者伪代码</p>
+<ol>
+<li><p>设置自定义 Scheme</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NSURL *playUrl = @&quot;http://120.25.226.186:32812/resources/videos/minion_01.mp4&quot;;</span><br><span class="line">playUrl = [OTVideoDownloadModel getSchemeVideoURL:self.videoURL];</span><br><span class="line"></span><br><span class="line">// result playUrl = @&quot;OTStreamhttp://120.25.226.186:32812/resources/videos/minion_01.mp4&quot;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>代理方法 - resourceLoader:shouldWaitForLoadingOfRequestedResource:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest &#123;</span><br><span class="line">  // 1. 新的request</span><br><span class="line">	 NSMutableURLRequest * request = loadingRequest.request.mutableCopy;</span><br><span class="line">	 NSURLComponents * comps = [[NSURLComponents alloc] initWithURL:request.URL resolvingAgainstBaseURL:NO];</span><br><span class="line">	 comps.scheme = [comps.scheme stringByReplacingOccurrencesOfString:OTCustomSchemePrefix withString:@&quot;&quot;];</span><br><span class="line">	 request.URL = comps.URL;</span><br><span class="line">	 request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;</span><br><span class="line">	 [self setupRequestRangeField:request dataRequest:loadingRequest.dataRequest];</span><br><span class="line">	 </span><br><span class="line">	 OTLog(@&quot;request: %@&quot;, request.allHTTPHeaderFields[@&quot;Range&quot;]);</span><br><span class="line">	 </span><br><span class="line">  // 2. 发起请求</span><br><span class="line">	 NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];</span><br><span class="line">	 </span><br><span class="line">  // 3. OT封装</span><br><span class="line">	 OTVideoDownloadModel * model = [OTVideoDownloadModel new];</span><br><span class="line">	 model.AVPlayerRequest = loadingRequest;</span><br><span class="line">	 model.connection = connection;</span><br><span class="line">	 model.url = request.URL;</span><br><span class="line">	 [self.requestList addObject:model];</span><br><span class="line">	 </span><br><span class="line">	 [connection start];</span><br><span class="line">	 </span><br><span class="line">	 self.url = request.URL;</span><br><span class="line">	 </span><br><span class="line">	 return YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>代理方法-resourceLoader:didCancelLoadingRequest</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest &#123;</span><br><span class="line">	 [self removeRequest:loadingRequest];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这是取消请求的方法，这个方法会被重复调用，内部是AVPlayer在控制，唯一要做的就是在这里取消对应的HTTP请求。</p>
+<p> 具体的内部调用策略不是很清楚，有时候会请求一大段数据，然后中途断开。</p>
+</li>
+<li><p>NSURLConnection的代理方法之 -connection:didReceiveResponse:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response &#123;</span><br><span class="line">  // 1. 获取contentType</span><br><span class="line">	 NSString *contentType = [response MIMEType];</span><br><span class="line">	 unsigned long long contentLength = [response expectedContentLength];</span><br><span class="line">	 </span><br><span class="line">	 // 2. 获取contentLength</span><br><span class="line">	 NSString *rangeValue = [(NSHTTPURLResponse *)response allHeaderFields][@&quot;Content-Range&quot;];</span><br><span class="line">	 if (rangeValue) &#123;</span><br><span class="line">		  NSArray *rangeItems = [rangeValue componentsSeparatedByString:@&quot;/&quot;];</span><br><span class="line">		  if (rangeItems.count &gt; 1) &#123;</span><br><span class="line">				contentLength = [rangeItems[1] longLongValue];</span><br><span class="line">		  &#125; else &#123;</span><br><span class="line">				contentLength = [response expectedContentLength];</span><br><span class="line">		  &#125;</span><br><span class="line">	 &#125;</span><br><span class="line">	 // 3. 设置 AVAssetResourceLoadingRequest</span><br><span class="line">	 AVAssetResourceLoadingRequest * request = [self loadingRequestForConnection:connection];</span><br><span class="line">	 request.response = response;</span><br><span class="line">	 request.contentInformationRequest.contentLength = contentLength;</span><br><span class="line">	 request.contentInformationRequest.contentType = contentType;</span><br><span class="line">	 request.contentInformationRequest.byteRangeAccessSupported = YES;</span><br><span class="line">	 self.fileLength = contentLength;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol start="5">
+<li><p>NSURLConnection的代理方法之 -connection:didReceiveData:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data &#123;</span><br><span class="line">  // 1. 给 AVAssetResourceLoadingRequest 数据</span><br><span class="line">  AVAssetResourceLoadingRequest * request = [self loadingRequestForConnection:connection];</span><br><span class="line">	 [request.dataRequest respondWithData:data];</span><br><span class="line">	 // 2. 写一份到磁盘中</span><br><span class="line">	 OTVideoDownloadModel * model = [self downloadModelWithConnection:connection];</span><br><span class="line">	 [model openFileWriterIfNeed];</span><br><span class="line">	 model.realRequestedLength += data.length;</span><br><span class="line">	 [model.fileHandler seekToEndOfFile];</span><br><span class="line">	 [model.fileHandler writeData:data];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>NSURLConnection的代理方法之 -connectionDidFinishLoading:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (void)connectionDidFinishLoading:(NSURLConnection *)connection &#123;</span><br><span class="line">  // 1. AVAssetResourceLoadingRequest 完成数据加载</span><br><span class="line">	 AVAssetResourceLoadingRequest * request = [self loadingRequestForConnection:connection];</span><br><span class="line">	 [request finishLoading];</span><br><span class="line">	 [self removeRequest:request];</span><br><span class="line">	 </span><br><span class="line">  // 2. 关闭本地文件句柄</span><br><span class="line">	 OTVideoDownloadModel * model = [self downloadModelWithConnection:connection];</span><br><span class="line">	 [model.fileHandler closeFile];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>NSURLConnection的代理方法之 -connection:didFailWithError:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error &#123;</span><br><span class="line">  // 1. 调用 AVAssetResourceLoadingRequest 的加载失败</span><br><span class="line">	 AVAssetResourceLoadingRequest * request = [self loadingRequestForConnection:connection];</span><br><span class="line">	 [request finishLoadingWithError:error];</span><br><span class="line">  // 2. 取消HTTP请求</span><br><span class="line">	 [self removeRequest:request];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意</p>
+<blockquote>
+<p>AVAssetResourceLoadingRequest 中的request默认是包含Range的，但是在iOS11中没有了，所以需要使用 AVAssetResourceLoadingDataRequest 中的 <code>requestedOffset</code>、<code>requestedLength</code>来组成一个Range。</p>
+</blockquote>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (void) setupRequestRangeField:(NSMutableURLRequest *)request dataRequest:(AVAssetResourceLoadingDataRequest *)dataRequest &#123;</span><br><span class="line">	 // iOS 11 中 request 不包含Range，所以需要自己手动填充进去</span><br><span class="line">	 if ([request valueForHTTPHeaderField:@&quot;Range&quot;] != nil) &#123;</span><br><span class="line">		  return ;</span><br><span class="line">	 &#125;</span><br><span class="line">	 long long offset = dataRequest.requestedOffset;</span><br><span class="line">	 NSInteger length = dataRequest.requestedLength;</span><br><span class="line">	 NSRange range = NSMakeRange((NSUInteger)offset, length);</span><br><span class="line">	 long long fromOffset = range.location;</span><br><span class="line">	 long long endOffset = range.location + range.length - 1;</span><br><span class="line">	 NSString *rangeStr = [NSString stringWithFormat:@&quot;bytes=%lld-%lld&quot;, fromOffset, endOffset];</span><br><span class="line">	 [request setValue:rangeStr forHTTPHeaderField:@&quot;Range&quot;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以上这些代理实现后就已经能顺利播放，并且将数据保存到本地了。现在还缺少一个方法来将本地的数据片段组合成一个完成的视频文件。这个方法的话不同的人有不同的写法，下一小节会介绍我的算法。</p>
+</li>
+</ol>
+<p>##0x03 OTPlayerCache 的结构</p>
+<p>AVAssetResourceLoader 虽然是一个比较简单的东西，但还是有很多细节，比如本地缓存目录的管理，这里面涉及到老旧文件清理，缓存目录大小，最大缓存数量限制等。</p>
+<p>临时缓存文件的管理，包括创建、删除、管理NSFileHandle的生命周期</p>
+<p>视频文件的合成</p>
+<h3 id="1-OTVideoDownloadModel"><a href="#1-OTVideoDownloadModel" class="headerlink" title="1 - OTVideoDownloadModel"></a>1 - OTVideoDownloadModel</h3><p>这个类就是对一个AVPlayer请求的封装，主要保存了几个关键的属性，在后续NSURLConnection回调中可以方便的取回</p>
+<p>还有一个功能就是替换scheme</p>
+<h3 id="2-OTVideoCacheService"><a href="#2-OTVideoCacheService" class="headerlink" title="2 - OTVideoCacheService"></a>2 - OTVideoCacheService</h3><p>这个类管理了视频缓存这边的所有本地文件的管理，包括成功缓存到的视频文件管理，临时文件的管理。比如外部需要做缓存大小查询、缓存清楚相关任务，就可以使用这个类，播放器在判断是否本地已有缓存的时候，也使用这个类。</p>
+<h3 id="3-视频文件合成"><a href="#3-视频文件合成" class="headerlink" title="3 - 视频文件合成"></a>3 - 视频文件合成</h3><p>缓存目录如下：</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050326.jpg" alt></p>
+<p>命名方式是 文件名-offset-length。</p>
+<p>代码主要分为两部分</p>
+<p>第一部分是排序，就是针对这个文件列表，文件从小到大排序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[self.requestList sortUsingComparator:^NSComparisonResult(OTVideoDownloadModel *  _Nonnull obj1, OTVideoDownloadModel *  _Nonnull obj2) &#123;</span><br><span class="line">  NSArray&lt;NSString *&gt; * obj1Arr = [obj1.filePath componentsSeparatedByString:@&quot;-&quot;];</span><br><span class="line">  NSArray&lt;NSString *&gt; * obj2Arr = [obj2.filePath componentsSeparatedByString:@&quot;-&quot;];</span><br><span class="line">  </span><br><span class="line">  if ([obj1Arr[obj1Arr.count - 2] integerValue] &gt; [obj2Arr[obj2Arr.count - 2] integerValue]) &#123;</span><br><span class="line">		return NSOrderedDescending;</span><br><span class="line">  &#125; else if ([obj1Arr[obj1Arr.count - 2] integerValue] &lt; [obj2Arr[obj2Arr.count - 2] integerValue]) &#123;</span><br><span class="line">		return NSOrderedAscending;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">		if ([obj1Arr[obj1Arr.count - 1] integerValue] &gt; [obj2Arr[obj2Arr.count - 1] integerValue]) &#123;</span><br><span class="line">			 return NSOrderedDescending;</span><br><span class="line">		&#125; else if ([obj1Arr[obj1Arr.count - 1] integerValue] &lt; [obj2Arr[obj2Arr.count - 1] integerValue]) &#123;</span><br><span class="line">			 return NSOrderedAscending;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			 return NSOrderedSame;</span><br><span class="line">		&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return [obj1.filePath compare:obj2.filePath];</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p>先判断offset，如果相等的话，再判断length</p>
+<p>第二部分是从临时文件里面拿到合适的data，写到视频文件中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[self.requestList enumerateObjectsUsingBlock:^(OTVideoDownloadModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) &#123;</span><br><span class="line">		  OTLog(@&quot;file list %@&quot;, obj.filePath);</span><br><span class="line">  // 1. 拿到Data</span><br><span class="line">		  NSData * writeData = [NSData dataWithContentsOfFile:obj.filePath];</span><br><span class="line">  // 2. 如果文件有缺失， 停止合成</span><br><span class="line">		  if (obj.AVPlayerRequest.dataRequest.requestedOffset &gt; self.writeLength) &#123;</span><br><span class="line">				OTLog(@&quot;文件有缺失， 停止合成&quot;);</span><br><span class="line">				[self.fileHandler closeFile];</span><br><span class="line">				[OTVideoCacheService removeVideoCacheWithURL:self.url complete:nil];</span><br><span class="line">				return ;</span><br><span class="line">		  &#125;</span><br><span class="line">		  </span><br><span class="line">		  if (obj.AVPlayerRequest.dataRequest.requestedOffset + writeData.length &lt;= self.writeLength) &#123;</span><br><span class="line">	// 3. 如果已经这个Data已经写进去了，那么忽略</span><br><span class="line">				// 已经有的数据</span><br><span class="line">		  &#125; else &#123;</span><br><span class="line">	// 4. 如果Data有重合部分，那么去重</span><br><span class="line">				if (obj.AVPlayerRequest.dataRequest.requestedOffset &lt; self.writeLength) &#123;</span><br><span class="line">					 long cha = self.writeLength - obj.AVPlayerRequest.dataRequest.requestedOffset;</span><br><span class="line">					 writeData = [writeData subdataWithRange:NSMakeRange(cha, writeData.length - cha)];</span><br><span class="line">				&#125;</span><br><span class="line">	 // 5. 将Data写入</span><br><span class="line">				[self.fileHandler seekToEndOfFile];</span><br><span class="line">				[self.fileHandler writeData:writeData];</span><br><span class="line">				writedLength += writeData.length;</span><br><span class="line">				</span><br><span class="line">				self.writeLength += writeData.length;</span><br><span class="line">		  &#125;</span><br><span class="line">		  </span><br><span class="line">	 &#125;];</span><br></pre></td></tr></table></figure>
+<p>解释一下第二点，为什么文件会有缺失。</p>
+<p>有一种情况，用户拖动了进度条，导致中间有一段数据是不会去请求的。然后解释一下判断，requestedOffset表示请求当前所处视频的offset，那么当你拖动了之后，这个offset必然会比当前写的位置更靠后，判断也就不成立了。</p>
+<p>如果有缺失片段，果断放弃合成，不要犹豫</p>
+<p>图示：</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050332.jpg" alt></p>
+<p>解释一下第三点，什么叫这个Data已经写进去了，要忽略</p>
+<p>主要是因为AVPlayer的请求有点跳，它不是顺序请求的，有些已经请求的数据，它会再请求一次，所以有些数据段会重合，甚至完全重合，比如第一个请求，总是重合的。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fo5niuaxkvj306m01njrp.jpg" alt></p>
+<p>图示：</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050336.jpg" alt></p>
+<p>解释第四点，为什么会有重合部分。</p>
+<p>原因其实在第三点已经说过了。看一下图示：</p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050340.jpg" alt></p>
+<p>跟第三点差不多，在排除完全重合的条件之后，只要判断 requestedOffset &lt; self.writeLength，那么这个片段必然是有重合部分的。</p>
+<p>排除这几个特殊情况后，正常情况，直接把数据插入到文件末尾就可以了。</p>
+<p>##0x04 OTPlayerCache 还需要完善的地方</p>
+<ol>
+<li><p>播放过程中如果有拖动，导致缓存缺失的情况下，所有已缓存下来的文件都会被删除</p>
+<blockquote>
+<p>已经下载到本地的片段无需删除，下次再播放的时候可以重复利用，不过这样代码会比较复杂。</p>
+</blockquote>
+</li>
+<li><p>缺少性能优化</p>
+</li>
+<li><p>缺少有效的测试</p>
+</li>
+<li><p>需要增加对预加载的支持</p>
+</li>
+<li><p>合成算法应该有更好的方案</p>
+</li>
+</ol>
+<h2 id="0x05-资料"><a href="#0x05-资料" class="headerlink" title="0x05 资料"></a>0x05 资料</h2><ol>
+<li>HTTP方式实现的缓存方案：KTVHTTPCache，<a href="https://github.com/ChangbaDevs/KTVHTTPCache" target="_blank" rel="noopener">https://github.com/ChangbaDevs/KTVHTTPCache</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/开源iOS框架/" rel="tag"># 开源iOS框架</a>
+          
+            <a href="/tags/AVPlayer/" rel="tag"># AVPlayer</a>
+          
+            <a href="/tags/AVAssetResourceLoader/" rel="tag"># AVAssetResourceLoader</a>
+          
+            <a href="/tags/播放器/" rel="tag"># 播放器</a>
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/29/生成资源bundle的流程/" rel="next" title="生成资源bundle的流程">
+                <i class="fa fa-chevron-left"></i> 生成资源bundle的流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/06/开发Tip之一/" rel="prev" title="开发Tip之一">
+                开发Tip之一 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irobbin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AVPlayer缓存-OTPlayerCache的介绍"><span class="nav-number">1.</span> <span class="nav-text">AVPlayer缓存-OTPlayerCache的介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-AVAssetResourceLoader-的基本原理"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 AVAssetResourceLoader 的基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-缓存的详细流程"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 缓存的详细流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-OTVideoDownloadModel"><span class="nav-number">1.2.1.</span> <span class="nav-text">1 - OTVideoDownloadModel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-OTVideoCacheService"><span class="nav-number">1.2.2.</span> <span class="nav-text">2 - OTVideoCacheService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-视频文件合成"><span class="nav-number">1.2.3.</span> <span class="nav-text">3 - 视频文件合成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-资料"><span class="nav-number">1.3.</span> <span class="nav-text">0x05 资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irobbin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4  </div>
+
+     <div style="width:300px;margin:0 auto; padding:20px 0;">
+        <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=35082102000166" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="http://qn-pic-cdn.irobbin1024.com/blog/5hqdg.png" style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽公网安备 35082102000166号</p></a>
+
+        <a target="_blank" href="http://beian.miit.gov.cn" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽ICP备19016914号-1</p></a>
+        <a target="_blank" href="http://beian.miit.gov.cn" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽ICP备19016914号-2</p></a>
+
+      </div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
