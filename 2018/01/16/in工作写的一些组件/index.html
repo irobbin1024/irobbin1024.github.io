@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="技术杂文,in,组件,封装,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="我写的一些组件[TOC] RBAirSandbox - 沙盒展示组件 基于开源库RBAirSandbox  添加了长按压缩文件夹发送到Mac功能 添加了图片浏览、文本浏览 计划添加更多功能   INPopKit - 弹窗组件 INPopKit是一套弹窗框架，程序中所有使用弹窗的地方，理论上都应该使用INPopKit,也能够使用INPopKit来显示所有的自定义弹窗，自定义你需要的View、遮挡级别">
+<meta name="keywords" content="技术杂文,in,组件,封装">
+<meta property="og:type" content="article">
+<meta property="og:title" content="in工作写的一些组件">
+<meta property="og:url" content="http://www.irobbin.com/2018/01/16/in工作写的一些组件/index.html">
+<meta property="og:site_name" content="irobbin的小站">
+<meta property="og:description" content="我写的一些组件[TOC] RBAirSandbox - 沙盒展示组件 基于开源库RBAirSandbox  添加了长按压缩文件夹发送到Mac功能 添加了图片浏览、文本浏览 计划添加更多功能   INPopKit - 弹窗组件 INPopKit是一套弹窗框架，程序中所有使用弹窗的地方，理论上都应该使用INPopKit,也能够使用INPopKit来显示所有的自定义弹窗，自定义你需要的View、遮挡级别">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050050.png">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050057.png">
+<meta property="og:image" content="http://www.irobbin.com/2018/01/16/images/IMG_1414.PNG">
+<meta property="og:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050101.png">
+<meta property="og:updated_time" content="2020-11-22T09:05:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="in工作写的一些组件">
+<meta name="twitter:description" content="我写的一些组件[TOC] RBAirSandbox - 沙盒展示组件 基于开源库RBAirSandbox  添加了长按压缩文件夹发送到Mac功能 添加了图片浏览、文本浏览 计划添加更多功能   INPopKit - 弹窗组件 INPopKit是一套弹窗框架，程序中所有使用弹窗的地方，理论上都应该使用INPopKit,也能够使用INPopKit来显示所有的自定义弹窗，自定义你需要的View、遮挡级别">
+<meta name="twitter:image" content="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050050.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.irobbin.com/2018/01/16/in工作写的一些组件/">
+
+
+
+
+
+  <title>in工作写的一些组件 | irobbin的小站</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">irobbin的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome To My Home</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.irobbin.com/2018/01/16/in工作写的一些组件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irobbin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="irobbin的小站">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">in工作写的一些组件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T05:53:22+08:00">
+                2018-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术杂文/" itemprop="url" rel="index">
+                    <span itemprop="name">技术杂文</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="我写的一些组件"><a href="#我写的一些组件" class="headerlink" title="我写的一些组件"></a>我写的一些组件</h1><p>[TOC]</p>
+<h3 id="RBAirSandbox-沙盒展示组件"><a href="#RBAirSandbox-沙盒展示组件" class="headerlink" title="RBAirSandbox - 沙盒展示组件"></a>RBAirSandbox - 沙盒展示组件</h3><blockquote>
+<p>基于开源库RBAirSandbox</p>
+<ul>
+<li>添加了长按压缩文件夹发送到Mac功能</li>
+<li>添加了图片浏览、文本浏览</li>
+<li>计划添加更多功能</li>
+</ul>
+</blockquote>
+<h3 id="INPopKit-弹窗组件"><a href="#INPopKit-弹窗组件" class="headerlink" title="INPopKit - 弹窗组件"></a>INPopKit - 弹窗组件</h3><blockquote>
+<p><code>INPopKit</code>是一套弹窗框架，程序中所有使用弹窗的地方，理论上都应该使用<code>INPopKit</code>,也能够使用<code>INPopKit</code>来显示所有的自定义弹窗，自定义你需要的View、遮挡级别、StatusBar的颜色等。你也可以自定义出现的动画和动画时间。</p>
+<ul>
+<li>通过协议、继承、抽象类使得整个框架非常灵活，容易定制</li>
+<li>可以选择使用模糊背景，或者灰色背景</li>
+<li>自由使用出现、消失的动画，包含但不局限于飞入、飞出、抖动、缩放、渐变</li>
+<li>自由使用window或者UIView的形式显示弹窗</li>
+<li>定制顶部信号条StautsBar的显示颜色</li>
+<li>自由选择使用AutoLayout或者Frame布局</li>
+<li>连续出现多个弹窗的情况，可以在不改变背景的情况下依次弹出</li>
+<li>框架内部处理键盘弹出时自动上移的操作</li>
+<li>可以控制点击外部自动隐藏功能</li>
+<li>抽象类功能强大，可以处理绝大多数从底部弹出的弹窗业务，比如分享菜单，列表选择等</li>
+</ul>
+<p>可以从in app中找到INPopKit的使用例子：</p>
+<ul>
+<li>列表选择：发图-&gt;继续-&gt;点击关闭</li>
+<li>居中弹窗：in记-&gt;选择图片-&gt;右上角更多-&gt;点击删除</li>
+<li>分享弹窗：in记-&gt;选择图片-&gt;右上角更多</li>
+<li>处理键盘：关注-&gt;更多-&gt;举报-&gt;其他</li>
+</ul>
+</blockquote>
+<h3 id="INImageView-图片显示组件"><a href="#INImageView-图片显示组件" class="headerlink" title="INImageView - 图片显示组件"></a>INImageView - 图片显示组件</h3><blockquote>
+<p>设计目标：app中所有显示图片的地方都是用这个组件</p>
+<p>为什么：组件可以优化性能，包括处理圆角，缩放，gif播放，frame帧播放，手势处理（单机，双击），标签处理，网络下载和本地加载，webp处理，下载进度，失败placehold，</p>
+</blockquote>
+<h3 id="INGifView-Gif展示组件"><a href="#INGifView-Gif展示组件" class="headerlink" title="INGifView - Gif展示组件"></a>INGifView - Gif展示组件</h3><blockquote>
+<ul>
+<li>封面图显示</li>
+<li>下载进度展示</li>
+<li>加载本地或者网络gif图片</li>
+<li>指定播放帧</li>
+<li>暂停和恢复播放</li>
+<li>重新播放功能</li>
+</ul>
+</blockquote>
+<h3 id="INVideoView-视频播放器"><a href="#INVideoView-视频播放器" class="headerlink" title="INVideoView - 视频播放器"></a>INVideoView - 视频播放器</h3><blockquote>
+<p>实现了一套和业务无关的视频播放组件，基础播放组件INVideoView不包含任何控件，所有业务处理逻辑由依附于INVideoView之上的一个我称之为XXControlView的subview提供，所有的代理也会给XXControlView。这样就实现了完全解耦，播放也展示分离。</p>
+<p>实现了一套缓存逻辑，包含两部分，一部分处理AVPlayer，另一部分实现了本地的缓存逻辑和缓存策略。</p>
+<ul>
+<li>JYVideoPlayerView 是跟业务无关的播放器，INVideoView是跟业务有关的播放器</li>
+<li>播放本地或者网络视频，提供基本功能，比如播放，暂停，获取视频长度和视频size</li>
+<li>缓存已经播放过的视频</li>
+<li>精细的缓存管理策略，比如获取缓存大小、控制最大缓存限制、清除老旧文件、根据URL来获取视频源文件、根据URL来清除视频文件等等</li>
+<li>控制系统音量调节的显示，因为系统音量视图会挡住视频内容，所以INVideoView在播放的时候可以选择自定义音量显示方式</li>
+<li>插拔耳机暂停和恢复播放</li>
+<li>程序前后台暂停和恢复播放</li>
+<li>全屏播放功能</li>
+</ul>
+<p>具体代码可以参见开源库<a href="https://github.com/irobbin/OTPlayerCache" target="_blank" rel="noopener">https://github.com/irobbin/OTPlayerCache</a></p>
+</blockquote>
+<h3 id="INSlideView-小in片轮播组件"><a href="#INSlideView-小in片轮播组件" class="headerlink" title="INSlideView - 小in片轮播组件"></a>INSlideView - 小in片轮播组件</h3><blockquote>
+<p>类似于幻灯片播放，有两种样式。</p>
+<p>第一种：缩放、移动、渐变混合</p>
+<p>第二种：快速变换预览</p>
+<p>小in片的动画看似简单，实则逻辑复杂，所有的逻辑都封装在INSlideView中，只需要传递图片和播放方式即可。</p>
+<ul>
+<li>首先播放暂停和视频一样，推到后台和回到前台需要暂停播放</li>
+<li>滑动列表需要暂停播放，手指移开继续播放</li>
+<li>先下载所有的图片，才会开始播放。第一张图片优先下载，然后先显示到View中</li>
+<li>有下载进度显示功能，此时会有灰色朦层显示，用户无法操作</li>
+<li>滑动距离和速度计算较为复杂，还有上下左右的动画不能连续执行，比如上次是向左，下一张必须是向右</li>
+<li>INSlideView提供清空内存功能，用来清除不用的图片，释放内存</li>
+<li>使用POP做动画</li>
+<li>INSlideView代码行数高达1015行</li>
+</ul>
+</blockquote>
+<h3 id="INOption-测试菜单组件"><a href="#INOption-测试菜单组件" class="headerlink" title="INOption - 测试菜单组件"></a>INOption - 测试菜单组件</h3><blockquote>
+<p>这是一个内部使用的组件，主要用来提供测试菜单项目，例如</p>
+<ul>
+<li>CPU、内存、网络信息</li>
+<li>服务器类型选择，QA或者线上</li>
+<li>LogCatcher的服务器地址</li>
+<li>清除App的所有缓存，用来初始化App，而不需要重新安装</li>
+<li>请求是否需要开启加密</li>
+<li>重新登录别的账号</li>
+<li>添加网络请求的额外参数</li>
+<li>可以自由接入其他测试菜单项</li>
+<li>与此配合使用的是一个Mac软件，LogCatcher</li>
+</ul>
+</blockquote>
+<h3 id="LogCatcher-Mac端Log抓取App"><a href="#LogCatcher-Mac端Log抓取App" class="headerlink" title="LogCatcher - Mac端Log抓取App"></a>LogCatcher - Mac端Log抓取App</h3><blockquote>
+<p>LogCatcher的主要作用是抓埋点和Socket通信，因为这两项在Charles中都比较难以抓取。</p>
+<p>除此之外LogCatcher也可以抓取所有经过INLogSocketManager发送的分级Log信息，且可以在LogCatcher中进行简单过滤，是一个非常好用的小工具。</p>
+<p>INLogSocketManager是一个分级的、封装的很好的Log系统，不过暂时只和LogCatcher进行协议配合。</p>
+</blockquote>
+<h3 id="INFlowLayoutView-横排组件"><a href="#INFlowLayoutView-横排组件" class="headerlink" title="INFlowLayoutView - 横排组件"></a>INFlowLayoutView - 横排组件</h3><blockquote>
+<p>一个横向布局组件，类似UICollectionView，但是比UICollectionView轻量级，和业务相关。</p>
+<p>实现的功能是所有的subView会像写字一样从左往右依次排开，不够显示的换行。</p>
+<p>可以在in，路径 发图-&gt;…-&gt;保存页面-&gt;话题选择（#号按钮）-&gt;热门话题下面找到</p>
+<p>实现细节：</p>
+<blockquote>
+<p>主要是计算，有一个二维数组linesData保存每一行，每一行中有若干个view信息，根据这个二维数组可以计算得出INFlowLayoutView的宽高，每一行中的每一个元素都保存着view，和frame，有了这些信息就可以把所有的view布局出来。</p>
+<p>计算规则：计算行内元素的时候使用最大吞并原则，先把当前元素加进来，然后计算此元素的frame，如果frame超过了宽度限制，那么另起一行，for循环倒退一个元素</p>
+</blockquote>
+</blockquote>
+<h3 id="INLineLayoutView-单排组件"><a href="#INLineLayoutView-单排组件" class="headerlink" title="INLineLayoutView - 单排组件"></a>INLineLayoutView - 单排组件</h3><blockquote>
+<p>这是一个横向布局组件，API简单，只需要简单往里面添加View，那么就可以将所有的subView居中显示</p>
+<p>原理：复写addSubview方法，每添加进来一个元素，会重新进行居中布局，当然你需要设置间距属性margin</p>
+</blockquote>
+<h3 id="INPhotoLayoutView-图片布局组件"><a href="#INPhotoLayoutView-图片布局组件" class="headerlink" title="INPhotoLayoutView - 图片布局组件"></a>INPhotoLayoutView - 图片布局组件</h3><blockquote>
+<p>INPhotoLayoutView组件主要是为了应付产品上多变的图片布局形式而创造的。</p>
+<p>理论上INPhotoLayoutView可以应对所有的图片布局</p>
+<p>实现原理是调用者提供一个布局类INPhotoLayoutModel过来，这个类提供了每张图片的frame，和布局的高度，这样INPhotoLayoutView就可以根据这些信息来精确布局</p>
+</blockquote>
+<h3 id="INPickerView-选择组件"><a href="#INPickerView-选择组件" class="headerlink" title="INPickerView - 选择组件"></a>INPickerView - 选择组件</h3><blockquote>
+<p>这是最近在同城趴App中写的一个组件。属于对UIPickerView的封装，使其更加易于使用和符合同城趴的UI设计标准。</p>
+<p>主要功能有：</p>
+<ul>
+<li>日期选择</li>
+<li>男女选择（可扩展为列表选择，自定义列表项目）</li>
+<li>INLocationPickerView省市区选择组件通过子类化INPickerView而实现</li>
+</ul>
+</blockquote>
+<h3 id="截图展示"><a href="#截图展示" class="headerlink" title="截图展示"></a>截图展示</h3><p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050050.png" alt="RBAirSandbox"></p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050057.png" alt="IMG_1412"></p>
+<p><img src="../images/IMG_1414.PNG" alt="IMG_1414"></p>
+<p><img src="http://qn-pic-cdn.irobbin.com/blog/2019-08-19-050101.png" alt="屏幕快照 2018-01-14 下午11.04.37"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/技术杂文/" rel="tag"># 技术杂文</a>
+          
+            <a href="/tags/in/" rel="tag"># in</a>
+          
+            <a href="/tags/组件/" rel="tag"># 组件</a>
+          
+            <a href="/tags/封装/" rel="tag"># 封装</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/16/关注我的简书/" rel="prev" title="关注我的简书">
+                关注我的简书 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irobbin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#我写的一些组件"><span class="nav-number">1.</span> <span class="nav-text">我写的一些组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAirSandbox-沙盒展示组件"><span class="nav-number">1.0.1.</span> <span class="nav-text">RBAirSandbox - 沙盒展示组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INPopKit-弹窗组件"><span class="nav-number">1.0.2.</span> <span class="nav-text">INPopKit - 弹窗组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INImageView-图片显示组件"><span class="nav-number">1.0.3.</span> <span class="nav-text">INImageView - 图片显示组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INGifView-Gif展示组件"><span class="nav-number">1.0.4.</span> <span class="nav-text">INGifView - Gif展示组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INVideoView-视频播放器"><span class="nav-number">1.0.5.</span> <span class="nav-text">INVideoView - 视频播放器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INSlideView-小in片轮播组件"><span class="nav-number">1.0.6.</span> <span class="nav-text">INSlideView - 小in片轮播组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INOption-测试菜单组件"><span class="nav-number">1.0.7.</span> <span class="nav-text">INOption - 测试菜单组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LogCatcher-Mac端Log抓取App"><span class="nav-number">1.0.8.</span> <span class="nav-text">LogCatcher - Mac端Log抓取App</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INFlowLayoutView-横排组件"><span class="nav-number">1.0.9.</span> <span class="nav-text">INFlowLayoutView - 横排组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INLineLayoutView-单排组件"><span class="nav-number">1.0.10.</span> <span class="nav-text">INLineLayoutView - 单排组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INPhotoLayoutView-图片布局组件"><span class="nav-number">1.0.11.</span> <span class="nav-text">INPhotoLayoutView - 图片布局组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INPickerView-选择组件"><span class="nav-number">1.0.12.</span> <span class="nav-text">INPickerView - 选择组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#截图展示"><span class="nav-number">1.0.13.</span> <span class="nav-text">截图展示</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irobbin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4  </div>
+
+     <div style="width:300px;margin:0 auto; padding:20px 0;">
+        <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=35082102000166" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="http://qn-pic-cdn.irobbin1024.com/blog/5hqdg.png" style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽公网安备 35082102000166号</p></a>
+
+        <a target="_blank" href="http://beian.miit.gov.cn" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽ICP备19016914号-1</p></a>
+        <a target="_blank" href="http://beian.miit.gov.cn" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src style="float:left;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽ICP备19016914号-2</p></a>
+
+      </div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
